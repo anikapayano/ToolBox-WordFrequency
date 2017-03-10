@@ -2,6 +2,9 @@
 Project Gutenberg """
 
 import string
+import collections
+
+
 
 
 def get_word_list(file_name):
@@ -10,7 +13,26 @@ def get_word_list(file_name):
     returns a list of the words used in the book as a list.
     All words are converted to lower case.
     """
-    pass
+    path = open(file_name, 'r')
+    content = path.readlines()
+    curr_line = 0
+    while content[curr_line].find('START OF THIS PROJECT GUTENBERG EBOOK') == -1:
+        curr_line += 1
+    content = content[curr_line+1:]
+    exclude = set(string.punctuation)
+    content = ''.join(ch for ch in content if ch not in exclude)
+    words = content.split()
+    listwords = []
+    for word in words:
+        listwords.append(word)
+    listwords = [word.lower() for word in listwords]
+    listwords = [word.strip(string.punctuation) for word in listwords]
+    return listwords
+
+text = '/home/anikapayano/ToolBox-WordFrequency/Pride_and_Prejudice.txt'
+
+
+get_word_list(text)
 
 
 def get_top_n_words(word_list, n):
@@ -23,8 +45,18 @@ def get_top_n_words(word_list, n):
     returns: a list of n most frequently occurring words ordered from most
     frequently to least frequentlyoccurring
     """
-    pass
+    hist = dict()
+    words = word_list
+    hist = collections.Counter(words)
+    mostfrequent = []
+    mostfrequent = sorted(hist, key=hist.get, reverse= True)
+    return mostfrequent[:n]
+
+
 
 if __name__ == "__main__":
     print("Running WordFrequency Toolbox")
-    print(string.punctuation)
+word_list = get_word_list(text)
+top_n_words = get_top_n_words(word_list, 100)
+#print('Number of Words:', len(top_n_words))
+print('Top', len(top_n_words), 'Words:' , top_n_words)
